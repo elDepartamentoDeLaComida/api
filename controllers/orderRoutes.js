@@ -32,7 +32,6 @@ exports.postOrders = {
   },
   handler: function (req, reply) {
     log.info({METHOD: "Recieved POST"});
-    console.dir(req.auth);
     //NORMALIZING INPUT
     var cleanedFarmer = myUtils.lowerAndTrim(req.payload.farmer);
     var cleanedProducts = myUtils.lowerAndTrim(req.payload.productName);
@@ -81,7 +80,7 @@ exports.postOrders = {
         });
       }
       //IF MORE THAN ONE PRODUCT, MATCHES THE PRODUCT TO ITS RESPECTIVE QUANTITY
-      //AND PRICE 
+      //AND PRICE
       return new Item({
         product: item,
         farmerInitials: cleanedInitials,

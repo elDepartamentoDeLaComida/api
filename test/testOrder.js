@@ -1,6 +1,7 @@
 var Lab = require("lab"),
   serializeJSON = require("../utils/myUtils").serializeJSON,
-  server = require('../index').server;
+  server = require('../index').server,
+  creds = require("../server.config").test.credentials
 
 Lab.experiment("Orders:", function () {
   Lab.test("post endpoint recieves Order",
@@ -11,6 +12,7 @@ Lab.experiment("Orders:", function () {
       var options = {
         method: "POST",
         url: "/api/orders",
+        credentials: creds,
         payload: {
           farmer: "test 1",
           farmerInitials: "t1",

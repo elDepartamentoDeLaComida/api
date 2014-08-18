@@ -10,7 +10,8 @@ var log = bunyan.createLogger({
 var Joi = require("joi"),
   Hapi = require("hapi"),
   User = require("../logic/user-logic").User,
-  path = require("path");
+  path = require("path"),
+  myutils = require("../utils/myUtils");
 
 exports.authenticate = {
   validate: {
@@ -31,25 +32,25 @@ exports.authenticate = {
   handler: function (req, reply) {
     log.info({METHOD: "POST AUTHENTICATION"});
     User.getAuthenticated(req.payload.username, req.payload.password, function (err, user, reason) {
-      console.error(err);
-      console.error(user);
-      console.error(reason);
+        log.info(user);
       if (err) {
         console.error({err: err});
+        return reply(err);
       }
       if (user) {
         log.info({"User logged in": user});
         req.auth.session.set(user);
-        return reply({redirect: Config.app.pages + "/adminMenu.html", user: user});
+        return reply(user);
       }
+      console.log("turn back!");
       var reasons = User.failedLogin;
       switch (reason) {
       case reasons.NOT_FOUND:
       case reasons.PASSWORD_INCORRECT:
-        reply(Hapi.error.badRequest("User/password pair incorrect"));
+        return reply(Hapi.error.badRequest("User/password pair incorrect"));
         break;
       case reasons.MAX_ATTEMPTS:
-        reply(Hapi.error.unauthorized("Too many attempts, try later"));
+        return reply(Hapi.error.unauthorized("Too many attempts, try later"));
         break;
       }
     });
@@ -65,3 +66,9 @@ exports.login = {
   }
 };
 
+exports.logout = {
+    handler: function (req, reply) {
+        req.auth.session.clear();
+        return reply.redirect('/');
+    }
+}
