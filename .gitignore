@@ -8,4 +8,6 @@
 *.swp
 /dist
 /generated
+/public
+/internal
 .sass-cache
