@@ -1,17 +1,13 @@
 //ROUTES
 //AUTHENTICATION
-var bunyan = require("bunyan"),
-  Config = require("../server.config");
-var log = bunyan.createLogger({
-    name: Config.logger.name,
-    serializers: bunyan.stdSerializers,
-    streams: Config.logger.streams
-  });
-var Joi = require("joi"),
-  Hapi = require("hapi"),
-  User = require("../logic/user-logic").User,
-  path = require("path"),
-  myUtils = require("../utils/myUtils");
+var loggly = require("loggly"),
+    Config = require("../server.config");
+var log = loggly.createClient(Config.logger);
+var Hapi = require("hapi"),
+    Joi = require("joi"),
+    User = require("../logic/user-logic").User,
+    path = require("path"),
+    myUtils = require("../utils/myUtils");
 
 exports.register = {
     validate: {
@@ -39,10 +35,9 @@ exports.register = {
                     if (err) {
                         return reply(err);
                     }
-                    else {
-                        log.info("new user:", doc);
-                        return reply(doc);
-                    }
+
+                    log.log("new user:", doc);
+                    return reply(doc);
                 });
             } else {
                 var error = Hapi.error.conflict("User: " + user._id + " already exists");
@@ -50,7 +45,7 @@ exports.register = {
             }
         });
     }
-}
+};
 
 exports.delete = {
     validate: {
@@ -63,13 +58,12 @@ exports.delete = {
         User.findByIdAndRemove(id).exec(function (err, user) {
             if (err) {
                 return reply(err);
-            } else {
-                log.info("Deleted", user);
-                return reply(user);
             }
+            log.log("Deleted", user);
+            return reply(user);
         });
     }
-}
+};
 
 exports.get = {
     validate: {
@@ -85,12 +79,11 @@ exports.get = {
             if (err) {
                 return reply(err);
             }
-            if (!users || users == false) {
+            if (!users || users === false) {
                 return reply(Hapi.error.notFound("User not found"));
-            } else {
-                log.info("Requested User-list");
-                return reply(users);
             }
+            log.log("Requested User-list");
+            return reply(users);
         });
     }
-}
+};

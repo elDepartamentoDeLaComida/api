@@ -1,12 +1,8 @@
 //ROUTES
 //ORDERS
-var bunyan = require("bunyan"),
-  Config = require("../server.config");
-var log = bunyan.createLogger({
-    name: Config.logger.name,
-    serializers: bunyan.stdSerializers,
-    streams: Config.logger.streams
-  });
+var loggly = require("loggly"),
+    Config = require("../server.config");
+var log = loggly.createClient(Config.logger);
 
 var myUtils = require("../utils/myUtils"),
   Joi = require("joi"),
@@ -31,7 +27,7 @@ exports.postOrders = {
     }
   },
   handler: function (req, reply) {
-    log.info({METHOD: "Recieved POST"});
+    log.log({METHOD: "Recieved POST"});
     //NORMALIZING INPUT
     var cleanedFarmer = myUtils.lowerAndTrim(req.payload.farmer);
     var cleanedProducts = myUtils.lowerAndTrim(req.payload.productName);
@@ -94,18 +90,18 @@ exports.postOrders = {
     inventoryItems.forEach(function (item) {
       item.save(function (err, i) {
         if (err) {
-          return log.error({err: err});
+          return log.log({err: err});
         }
-        log.info({"New Item:": i});
+        log.log({"New Item:": i});
       });
     });
 
     //SAVING THE NEW ORDER TO THE DATABASE
     newOrder.save(function (err, order) {
       if (err) {
-        return log.error({error: err});
+        return log.log({error: err});
       }
-      log.info({"Order Saved": order});
+      log.log({"Order Saved": order});
       reply({"logStatus" : "success"});
     });
   }
@@ -116,8 +112,8 @@ exports.postOrders = {
 exports.getOrders = {
   auth: "session",
   handler: function (req, reply) {
-    log.info("RECIEVED GET");
-    //log.info({req: req});
+    log.log("RECIEVED GET");
+    //log.log({req: req});
     reply("CAN'T PROCESS YET, but thanks for trying");
   }
 };
