@@ -1,7 +1,7 @@
 //ROUTES
 //SALES
 var loggly = require("loggly"),
-    Config = require("../server.config");
+    Config = require("../config/server.config");
 var log = loggly.createClient(Config.logger);
 var myUtils = require("../utils/myUtils"),
     Hapi = require("hapi"),
@@ -18,7 +18,7 @@ exports.getTotal = {
             productName: Joi.alternatives().try(Joi.string(), Joi.array().includes(Joi.string())).required(),
             quantity: Joi.alternatives().try(Joi.number().min(1), Joi.array().includes(Joi.number().min(1))).required(),
             notes: Joi.string(),
-            shipping: Joi.string(),
+            transportation: Joi.string(),
             delivery: Joi.number().required(),
             farmerInitials: Joi.alternatives().try(Joi.string(), Joi.array().includes(Joi.string())).required(),
         }
@@ -30,9 +30,10 @@ exports.getTotal = {
         var cleanedProducts = myUtils.lowerAndTrim(req.query.productName);
         var cleanedInitials = myUtils.lowerAndTrim(req.query.farmerInitials);
 
-        //CALCULATING TOTAL AND ORDER_ID
         var total = 0,
-            orderNum = 0;
+            orderNum = 0,
+            thisQuantity = 0,
+            shippingCosts = 0;
 
         cleanedProducts = myUtils.arrayify(cleanedProducts);
         cleanedInitials = myUtils.arrayify(cleanedInitials);
@@ -57,11 +58,11 @@ exports.getTotal = {
                 .limit(1)
                 .exec(function (err, item) {
 
-                    var thisQuantity;
                     if (err) {
                         reply(err);
                         return;
                     }
+
                     //IF PRODUCT IS NOT FOUND
                     if (!item || item === null) {
                         var error = Hapi.error.notFound("Product: " + product + " from " +  cleanedInitials[index] + " not found");
@@ -73,7 +74,6 @@ exports.getTotal = {
                         reply({logStatus: item.product + " not in stock"});
                         return;
                     }
-
                     if (cleanedProducts.length === 1) {
                         thisQuantity = req.query.quantity;
                     } else {
@@ -81,14 +81,14 @@ exports.getTotal = {
                     }
 
                     //CALCULATING THE TOTAL
-                    total += item.price * thisQuantity;
+                    total = total + item.price * thisQuantity;
 
                     //IF IT'S THE LAST ITEM TO CALCULATE, SAVE THE THE STARTED SALE TO DB
-                    if (index + 1 === cleanedProducts.length) {
-                        if (!!req.query.shipping) {
-                            total += (total * 0.1) + (req.query.delivery || 0);
-                        }
-                        total = parseFloat(total.toFixed(2));
+                    if (index === 0) {
+                        console.log("TOTAL", total);
+
+                        shippingCosts = myUtils.getShipping(total, !!req.query.transportation);
+                        total += shippingCosts;
                         var thisSale = new Sale({
                             _id: orderNum,
                             total: total
@@ -117,7 +117,7 @@ exports.postSale = {
             productName: Joi.alternatives().try(Joi.string(), Joi.array().includes(Joi.string())).required(),
             quantity: Joi.alternatives().try(Joi.number().min(1), Joi.array().includes(Joi.number().min(1))).required(),
             farmerInitials: Joi.alternatives().try(Joi.string(), Joi.array().includes(Joi.string())).required(),
-            shipping: Joi.string(),
+            transportation: Joi.string(),
             delivery: Joi.number().required(),
             notes: Joi.string(),
             total: Joi.number().required()
@@ -174,7 +174,7 @@ exports.postSale = {
                                 products: cleanedProducts,
                                 quantities: req.payload.quantity,
                                 notes: req.payload.notes,
-                                shipping: !!req.payload.shipping,
+                                shipping: !!req.payload.transportation,
                                 delivery: req.payload.delivery
                             },
                             function (err, doc) {

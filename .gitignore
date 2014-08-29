@@ -5,6 +5,8 @@
 **/*.config.js
 /config
 **/todayTODO.md
+Procfile
+gulpfile.js
 **/log
 *.swp
 /dist

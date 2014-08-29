@@ -1,5 +1,5 @@
 var loggly = require("loggly"),
-    Config = require("../server.config");
+    Config = require("../config/server.config");
 
 exports.handler = {
     handler: {

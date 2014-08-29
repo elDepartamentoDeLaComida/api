@@ -1,7 +1,7 @@
 //ROUTES
 //AUTHENTICATION
 var loggly = require("loggly"),
-    Config = require("../server.config");
+    Config = require("../config/server.config");
 var log = loggly.createClient(Config.logger);
 var Hapi = require("hapi"),
     Joi = require("joi"),

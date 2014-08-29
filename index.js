@@ -1,6 +1,6 @@
 "use strict";
 var loggly = require("loggly"),
-    Config = require("./server.config");
+    Config = require("./config/server.config");
 var log = loggly.createClient(Config.logger);
 var Hapi = require("hapi"),
     Routes = require("./routes"),
@@ -9,7 +9,8 @@ var Hapi = require("hapi"),
 
 //LEAVE CORS TRUE TO ALLOW LOCALHOST TESTING
 //LEAVE ABORT EARLY TRUE FOR DEBUG
-var server = new Hapi.Server(Config.server.port, Config.server.hostname, Config.options);
+var port = process.env.PORT || Config.server.port;
+var server = new Hapi.Server(port);
 
 //START
 server.pack.register([require('lout'), require("hapi-auth-cookie")], function (err) {

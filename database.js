@@ -1,8 +1,14 @@
 var mongoose = require("mongoose"),
-    ConfigDB = require("./db.config").mongoLocal;
+    ConfigDB;
+if (process.env.PORT) {
+    console.log("using external");
+    ConfigDB = require("./config/db.config").mongo;
+} else {
+    ConfigDB = require("./config/db.config").mongoLocal;
+}
 
 //SETUP
-mongoose.connect("mongodb://" + ConfigDB.url + "/" + ConfigDB.database);
+mongoose.connect("mongodb://" + ConfigDB.dbuser + ":" + ConfigDB.password + "@" + ConfigDB.url + "/" + ConfigDB.database);
 var db = mongoose.connection;
 
 db.on("error", console.error.bind(console, "connection error:"));
