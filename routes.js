@@ -2,7 +2,7 @@ var requireDir = require("require-dir");
 var routes = requireDir("./controllers");
 
 exports.endpoints = [
-    {method: "GET", path: "/api/orders", config: routes.orderRoutes.getOrders},
+    {method: "GET", path: "/api/orders/{farmerInitials?}", config: routes.orderRoutes.getOrders},
     {method: "POST", path: "/api/orders", config: routes.orderRoutes.postOrders},
 
     {method: "GET", path: "/api/sales", config: routes.saleRoutes.getTotal},

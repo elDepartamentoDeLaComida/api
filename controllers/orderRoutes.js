@@ -123,33 +123,26 @@ exports.postOrders = {
     }
 };
 
-//TODO
 //ROUTE FOR GETTING ORDERS FROM DB
 exports.getOrders = {
     auth: "session",
-    handler: function (req, reply) {
-        log.log("RECIEVED GET");
-      //log.log({req: req});
-        reply("CAN'T PROCESS YET, but thanks for trying");
-    }
-};
-exports.getOrder = {
-    auth: "session",
     validate: {
-        query: {
+        params: {
             farmerInitials: Joi.string()
         }
     },
     handler: function (req, reply) {
         var query = {},
-            cleanedFarmerId = "";
-        if (req.query.farmerInitials) {
-            cleanedFarmerId = myUtils.lowerAndTrim(req.query.farmerInitials);
+            cleanedFarmerId = "",
+            limit;
+        if (req.params.farmerInitials) {
+            cleanedFarmerId = myUtils.lowerAndTrim(req.params.farmerInitials);
             query = {"farmerInitials": cleanedFarmerId};
+            limit = 1;
         }
         Order.find(query).lean()
             .sort("-date")
-            .limit(1)
+            .limit(limit)
             .exec(function (err, order) {
                 if (err) {
                     return reply(err);
