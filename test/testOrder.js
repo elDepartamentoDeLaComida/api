@@ -20,7 +20,7 @@ Lab.experiment("Orders:", function () {
                     price: [0.5, 1],
                     quantity: [2, 1],
                     unit: ["oz", "oz"],
-                    shipping: "true",
+                    transportation: "true",
                     productName: ["oregano", "tomillo"],
                 }
             };

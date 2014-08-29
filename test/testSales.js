@@ -8,13 +8,13 @@ Lab.experiment("Sales:", function () {
     Lab.test("get endpoint can calculate sale",
         function (done) {
             var assertions = {
-                total: 6.65
+                total: 11.5
             };
             var query = {
                 productName: ["oregano", "tomillo"],
                 quantity: [1, 1],
                 farmerInitials: ["t1", "t1"],
-                shipping: "true",
+                transportation: "true",
                 delivery: 5
             };
             var options = {
@@ -39,7 +39,7 @@ Lab.experiment("Sales:", function () {
                 productName: ["magicdust", "hornytoad"],
                 quantity: [1, 1],
                 farmerInitials: ["t2", "t5"],
-                shipping: "true",
+                transportation: "true",
                 delivery: 5
             };
             var options = {
@@ -65,7 +65,7 @@ Lab.experiment("Sales:", function () {
                 url: "/api/sales",
                 payload: {
                     _id: order._id,
-                    shipping: "true",
+                    transportation: "true",
                     delivery: 5,
                     total: order.total,
                     productName: ["oregano", "tomillo"],
