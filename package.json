@@ -9,6 +9,9 @@
     "test-build": "npm run test && npm run test-pretty",
     "test-pretty": "./node_modules/lab/bin/lab -c -v -r html -o tests.html"
   },
+  "engines": {
+    "node": "0.10.x"
+  },
   "dependencies": {
     "bcrypt": "^0.7.8",
     "hapi": "^6.2.0",
@@ -20,6 +23,8 @@
   "author": "Michael Perez <michael@nighnight.com>",
   "license": "ISC",
   "devDependencies": {
+    "gulp": "^3.8.7",
+    "gulp-changed": "^1.0.0",
     "lab": "^3.2.1",
     "lout": "^5.0.1",
     "stackup": "0.0.5"
