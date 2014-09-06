@@ -4,10 +4,11 @@ var mongoose = require("../database").mongoose,
 //SCHEMA
 var orderSchema = new Schema({
     farmer: String,
-    farmerInitials: String,
+    farmerId: String,
     date: {type: Date, default: Date.now},
     products: Array,
     quantities: Array,
+    unit: Array,
     transportation: Boolean,
     transportationCosts: Number,
     prices: Array,
@@ -18,7 +19,7 @@ exports.Order = mongoose.model('Order', orderSchema);
 
 var saleSchema = new Schema({
     _id: Number,
-    farmerInitials: Array,
+    farmerId: Array,
     date: {type: Date, default: Date.now},
     products: Array,
     quantities: Array,
@@ -33,7 +34,7 @@ var itemSchema = new Schema({
     product: String,
     price: Number,
     farmer: String,
-    farmerInitials: String,
+    farmerId: String,
     quantity: Number,
     date: {type: Date, default: Date.now},
     inStock: {type: Boolean, default: true}

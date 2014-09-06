@@ -18,8 +18,8 @@ exports.postOrders = {
     validate: {
         payload: {
             farmer: Joi.string().required(),
-            farmerInitials: Joi.string().required(),
-            productName: Joi.alternatives().try(Joi.string(), Joi.array().includes(Joi.string())).required(),
+            farmerId: Joi.string().required(),
+            product: Joi.alternatives().try(Joi.string(), Joi.array().includes(Joi.string())).required(),
             quantity: Joi.alternatives().try(Joi.number().min(1), Joi.array().includes(Joi.number().min(1))).required(),
             price: Joi.alternatives().try(Joi.number().min(0), Joi.array().includes(Joi.number().min(0))).required(),
             unit: Joi.alternatives().try(Joi.string(), Joi.array().includes(Joi.string())).required(),
@@ -29,6 +29,7 @@ exports.postOrders = {
     },
     handler: function (req, reply) {
         //vars
+        console.log(req.payload.unit);
         var cleanedFarmer,
             cleanedProducts,
             cleanedInitials,
@@ -40,8 +41,8 @@ exports.postOrders = {
         console.log(req.payload);
         //NORMALIZING INPUT
         cleanedFarmer = myUtils.lowerAndTrim(req.payload.farmer);
-        cleanedProducts = myUtils.lowerAndTrim(req.payload.productName);
-        cleanedInitials = myUtils.lowerAndTrim(req.payload.farmerInitials);
+        cleanedProducts = myUtils.lowerAndTrim(req.payload.product);
+        cleanedInitials = myUtils.lowerAndTrim(req.payload.farmerId);
 
         //TURNING PRODUCTS INTO ARRAY FOR EASIER HANDLING
         cleanedProducts = myUtils.arrayify(cleanedProducts);
@@ -60,14 +61,13 @@ exports.postOrders = {
                 (total * 0.1),
                 10
             );
-            total += shippingCosts;
         }
         shippingCosts = myUtils.getShipping(total, !!req.payload.transportation);
         total += shippingCosts;
         //CREATING NEW ORDER OBJECT
         newOrder = new Order({
             farmer: cleanedFarmer,
-            farmerInitials: cleanedInitials,
+            farmerId: cleanedInitials,
             products: cleanedProducts,
             quantities: req.payload.quantity,
             prices: req.payload.price,
@@ -84,7 +84,7 @@ exports.postOrders = {
                 return new Item({
                     product: item,
                     price: req.payload.price,
-                    farmerInitials: cleanedInitials,
+                    farmerId: cleanedInitials,
                     quantity: req.payload.quantity,
                     unit: req.payload.unit,
                     farmer: cleanedFarmer
@@ -94,7 +94,7 @@ exports.postOrders = {
           //AND PRICE
             return new Item({
                 product: item,
-                farmerInitials: cleanedInitials,
+                farmerId: cleanedInitials,
                 price: req.payload.price[index],
                 unit: req.payload.unit[index],
                 quantity: req.payload.quantity[index],
@@ -128,16 +128,17 @@ exports.getOrders = {
     auth: "session",
     validate: {
         params: {
-            farmerInitials: Joi.string()
+            farmerId: Joi.string()
         }
     },
     handler: function (req, reply) {
         var query = {},
             cleanedFarmerId = "",
             limit;
-        if (req.params.farmerInitials) {
-            cleanedFarmerId = myUtils.lowerAndTrim(req.params.farmerInitials);
-            query = {"farmerInitials": cleanedFarmerId};
+        if (req.params.farmerId) {
+            console.log("params exists");
+            cleanedFarmerId = myUtils.lowerAndTrim(req.params.farmerId);
+            query = {"farmerId": cleanedFarmerId};
             limit = 1;
         }
         Order.find(query).lean()

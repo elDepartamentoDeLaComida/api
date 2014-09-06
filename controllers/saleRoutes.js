@@ -15,20 +15,20 @@ var myUtils = require("../utils/myUtils"),
 exports.getTotal = {
     validate: {
         query: {
-            productName: Joi.alternatives().try(Joi.string(), Joi.array().includes(Joi.string())).required(),
+            product: Joi.alternatives().try(Joi.string(), Joi.array().includes(Joi.string())).required(),
             quantity: Joi.alternatives().try(Joi.number().min(1), Joi.array().includes(Joi.number().min(1))).required(),
             notes: Joi.string(),
             transportation: Joi.string(),
             delivery: Joi.number().required(),
-            farmerInitials: Joi.alternatives().try(Joi.string(), Joi.array().includes(Joi.string())).required(),
+            farmerId: Joi.alternatives().try(Joi.string(), Joi.array().includes(Joi.string())).required(),
         }
     },
     handler: function (req, reply) {
         log.log({METHOD: "RECIEVED GET"});
         //log.log({req: req});
         //NORMALIZING INPUT
-        var cleanedProducts = myUtils.lowerAndTrim(req.query.productName);
-        var cleanedInitials = myUtils.lowerAndTrim(req.query.farmerInitials);
+        var cleanedProducts = myUtils.lowerAndTrim(req.query.product);
+        var cleanedInitials = myUtils.lowerAndTrim(req.query.farmerId);
 
         var total = 0,
             orderNum = 0,
@@ -51,7 +51,7 @@ exports.getTotal = {
         cleanedProducts.forEach(function (product, index) {
             Item.findOne({
                 "product": product,
-                "farmerInitials": cleanedInitials[index]
+                "farmerId": cleanedInitials[index]
             }).lean()
                 .select("product price farmer inStock")
                 .sort("-date")
@@ -81,10 +81,10 @@ exports.getTotal = {
                     }
 
                     //CALCULATING THE TOTAL
-                    total = total + item.price * thisQuantity;
+                    total += item.price * thisQuantity;
 
                     //IF IT'S THE LAST ITEM TO CALCULATE, SAVE THE THE STARTED SALE TO DB
-                    if (index === 0) {
+                    if (index + 1 === cleanedProducts.length) {
                         console.log("TOTAL", total);
 
                         shippingCosts = myUtils.getShipping(total, !!req.query.transportation);
@@ -114,9 +114,9 @@ exports.postSale = {
     validate: {
         payload: {
             _id: Joi.number().min(0).required(),
-            productName: Joi.alternatives().try(Joi.string(), Joi.array().includes(Joi.string())).required(),
+            product: Joi.alternatives().try(Joi.string(), Joi.array().includes(Joi.string())).required(),
             quantity: Joi.alternatives().try(Joi.number().min(1), Joi.array().includes(Joi.number().min(1))).required(),
-            farmerInitials: Joi.alternatives().try(Joi.string(), Joi.array().includes(Joi.string())).required(),
+            farmerId: Joi.alternatives().try(Joi.string(), Joi.array().includes(Joi.string())).required(),
             transportation: Joi.string(),
             delivery: Joi.number().required(),
             notes: Joi.string(),
@@ -127,8 +127,8 @@ exports.postSale = {
         log.log({METHOD: "Recieved POST"});
         //log.log({req: req});
         //NORMAILZING INPUT
-        var cleanedInitials = myUtils.lowerAndTrim(req.payload.farmerInitials);
-        var cleanedProducts = myUtils.lowerAndTrim(req.payload.productName);
+        var cleanedInitials = myUtils.lowerAndTrim(req.payload.farmerId);
+        var cleanedProducts = myUtils.lowerAndTrim(req.payload.product);
         var cleanedQuantities = req.payload.quantity;
 
         cleanedProducts = myUtils.arrayify(cleanedProducts);
@@ -139,7 +139,7 @@ exports.postSale = {
         cleanedProducts.forEach(function (product, index) {
             Item.findOne({
                 "product": product,
-                "farmerInitials": cleanedInitials[index]
+                "farmerId": cleanedInitials[index]
             }).lean()
                 .select("product price farmer quantity inStock")
                 .sort("-date")
@@ -170,7 +170,7 @@ exports.postSale = {
                         Sale.findByIdAndUpdate(
                             req.payload._id,
                             {
-                                farmerInitials: cleanedInitials,
+                                farmerId: cleanedInitials,
                                 products: cleanedProducts,
                                 quantities: req.payload.quantity,
                                 notes: req.payload.notes,
