@@ -2392,7 +2392,7 @@
                         <tr class="hit">
                             <td class="line">24</td>
                             <td class="hits"></td>
-                            <td class="source">      farmerInitials: Joi.string().required(),</td>
+                            <td class="source">      farmerId: Joi.string().required(),</td>
                         </tr>
                     
                 
@@ -2400,7 +2400,7 @@
                         <tr class="hit">
                             <td class="line">25</td>
                             <td class="hits"></td>
-                            <td class="source">      productName: Joi.alternatives().try(Joi.string(), Joi.array().includes(Joi.string())).required(),</td>
+                            <td class="source">      product: Joi.alternatives().try(Joi.string(), Joi.array().includes(Joi.string())).required(),</td>
                         </tr>
                     
                 
@@ -2504,7 +2504,7 @@
                         <tr class="hit">
                             <td class="line">38</td>
                             <td class="hits">1</td>
-                            <td class="source">    var cleanedProducts = myUtils.lowerAndTrim(req.payload.productName);</td>
+                            <td class="source">    var cleanedProducts = myUtils.lowerAndTrim(req.payload.product);</td>
                         </tr>
                     
                 
@@ -2512,7 +2512,7 @@
                         <tr class="hit">
                             <td class="line">39</td>
                             <td class="hits">1</td>
-                            <td class="source">    var cleanedInitials = myUtils.lowerAndTrim(req.payload.farmerInitials);</td>
+                            <td class="source">    var cleanedInitials = myUtils.lowerAndTrim(req.payload.farmerId);</td>
                         </tr>
                     
                 
@@ -2694,7 +2694,7 @@
                         <tr class="hit">
                             <td class="line">61</td>
                             <td class="hits"></td>
-                            <td class="source">      farmerInitials: cleanedInitials,</td>
+                            <td class="source">      farmerId: cleanedInitials,</td>
                         </tr>
                     
                 
@@ -2826,7 +2826,7 @@
                         <tr class="hit">
                             <td class="line">77</td>
                             <td class="hits"></td>
-                            <td class="source">          farmerInitials: cleanedInitials,</td>
+                            <td class="source">          farmerId: cleanedInitials,</td>
                         </tr>
                     
                 
@@ -2906,7 +2906,7 @@
                         <tr class="hit">
                             <td class="line">87</td>
                             <td class="hits"></td>
-                            <td class="source">        farmerInitials: cleanedInitials,</td>
+                            <td class="source">        farmerId: cleanedInitials,</td>
                         </tr>
                     
                 
@@ -3420,7 +3420,7 @@
                         <tr class="hit">
                             <td class="line">22</td>
                             <td class="hits"></td>
-                            <td class="source">      productName: Joi.alternatives().try(Joi.string(), Joi.array().includes(Joi.string())).required(),</td>
+                            <td class="source">      product: Joi.alternatives().try(Joi.string(), Joi.array().includes(Joi.string())).required(),</td>
                         </tr>
                     
                 
@@ -3460,7 +3460,7 @@
                         <tr class="hit">
                             <td class="line">27</td>
                             <td class="hits"></td>
-                            <td class="source">      farmerInitials: Joi.alternatives().try(Joi.string(), Joi.array().includes(Joi.string())).required(),</td>
+                            <td class="source">      farmerId: Joi.alternatives().try(Joi.string(), Joi.array().includes(Joi.string())).required(),</td>
                         </tr>
                     
                 
@@ -3516,7 +3516,7 @@
                         <tr class="hit">
                             <td class="line">34</td>
                             <td class="hits">2</td>
-                            <td class="source">    var cleanedProducts = myUtils.lowerAndTrim(req.query.productName);</td>
+                            <td class="source">    var cleanedProducts = myUtils.lowerAndTrim(req.query.product);</td>
                         </tr>
                     
                 
@@ -3524,7 +3524,7 @@
                         <tr class="hit">
                             <td class="line">35</td>
                             <td class="hits">2</td>
-                            <td class="source">    var cleanedInitials = myUtils.lowerAndTrim(req.query.farmerInitials);</td>
+                            <td class="source">    var cleanedInitials = myUtils.lowerAndTrim(req.query.farmerId);</td>
                         </tr>
                     
                 
@@ -3706,7 +3706,7 @@
                         <tr class="hit">
                             <td class="line">57</td>
                             <td class="hits"></td>
-                            <td class="source">        &quot;farmerInitials&quot;: cleanedInitials[index]</td>
+                            <td class="source">        &quot;farmerId&quot;: cleanedInitials[index]</td>
                         </tr>
                     
                 
@@ -4236,7 +4236,7 @@
                         <tr class="hit">
                             <td class="line">120</td>
                             <td class="hits"></td>
-                            <td class="source">      productName: Joi.alternatives().try(Joi.string(), Joi.array().includes(Joi.string())).required(),</td>
+                            <td class="source">      product: Joi.alternatives().try(Joi.string(), Joi.array().includes(Joi.string())).required(),</td>
                         </tr>
                     
                 
@@ -4252,7 +4252,7 @@
                         <tr class="hit">
                             <td class="line">122</td>
                             <td class="hits"></td>
-                            <td class="source">      farmerInitials: Joi.alternatives().try(Joi.string(), Joi.array().includes(Joi.string())).required(),</td>
+                            <td class="source">      farmerId: Joi.alternatives().try(Joi.string(), Joi.array().includes(Joi.string())).required(),</td>
                         </tr>
                     
                 
@@ -4340,7 +4340,7 @@
                         <tr class="hit">
                             <td class="line">133</td>
                             <td class="hits">1</td>
-                            <td class="source">    var cleanedInitials = myUtils.lowerAndTrim(req.payload.farmerInitials);</td>
+                            <td class="source">    var cleanedInitials = myUtils.lowerAndTrim(req.payload.farmerId);</td>
                         </tr>
                     
                 
@@ -4348,7 +4348,7 @@
                         <tr class="hit">
                             <td class="line">134</td>
                             <td class="hits">1</td>
-                            <td class="source">    var cleanedProducts = myUtils.lowerAndTrim(req.payload.productName);</td>
+                            <td class="source">    var cleanedProducts = myUtils.lowerAndTrim(req.payload.product);</td>
                         </tr>
                     
                 
@@ -4436,7 +4436,7 @@
                         <tr class="hit">
                             <td class="line">145</td>
                             <td class="hits"></td>
-                            <td class="source">        &quot;farmerInitials&quot;: cleanedInitials[index]</td>
+                            <td class="source">        &quot;farmerId&quot;: cleanedInitials[index]</td>
                         </tr>
                     
                 
@@ -4684,7 +4684,7 @@
                         <tr class="hit">
                             <td class="line">175</td>
                             <td class="hits"></td>
-                            <td class="source">                farmerInitials: cleanedInitials,</td>
+                            <td class="source">                farmerId: cleanedInitials,</td>
                         </tr>
                     
                 
@@ -6996,7 +6996,7 @@
                         <tr class="hit">
                             <td class="line">7</td>
                             <td class="hits"></td>
-                            <td class="source">  farmerInitials: String,</td>
+                            <td class="source">  farmerId: String,</td>
                         </tr>
                     
                 
@@ -7100,7 +7100,7 @@
                         <tr class="hit">
                             <td class="line">20</td>
                             <td class="hits"></td>
-                            <td class="source">  farmerInitials: Array,</td>
+                            <td class="source">  farmerId: Array,</td>
                         </tr>
                     
                 
@@ -7220,7 +7220,7 @@
                         <tr class="hit">
                             <td class="line">35</td>
                             <td class="hits"></td>
-                            <td class="source">  farmerInitials: String,</td>
+                            <td class="source">  farmerId: String,</td>
                         </tr>
                     
                 
