@@ -11,9 +11,9 @@ Lab.experiment("Sales:", function () {
                 total: 11.5
             };
             var query = {
-                productName: ["oregano", "tomillo"],
+                product: ["oregano", "tomillo"],
                 quantity: [1, 1],
-                farmerInitials: ["t1", "t1"],
+                farmerId: ["t1", "t1"],
                 transportation: "true",
                 delivery: 5
             };
@@ -36,9 +36,9 @@ Lab.experiment("Sales:", function () {
     Lab.test("items that don't exist, return 404 upon total calculation",
         function (done) {
             var query = {
-                productName: ["magicdust", "hornytoad"],
+                product: ["magicdust", "hornytoad"],
                 quantity: [1, 1],
-                farmerInitials: ["t2", "t5"],
+                farmerId: ["t2", "t5"],
                 transportation: "true",
                 delivery: 5
             };
@@ -68,9 +68,9 @@ Lab.experiment("Sales:", function () {
                     transportation: "true",
                     delivery: 5,
                     total: order.total,
-                    productName: ["oregano", "tomillo"],
+                    product: ["oregano", "tomillo"],
                     quantity: [1, 1],
-                    farmerInitials: ["t1", "t1"],
+                    farmerId: ["t1", "t1"],
                     notes: "Nothing to report"
                 }
             };
