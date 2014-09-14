@@ -15,6 +15,7 @@ var myUtils = require("../utils/myUtils"),
 exports.getTotal = {
     validate: {
         query: {
+            customerName: Joi.string(),
             product: Joi.alternatives().try(Joi.string(), Joi.array().includes(Joi.string())).required(),
             quantity: Joi.alternatives().try(Joi.number().min(1), Joi.array().includes(Joi.number().min(1))).required(),
             notes: Joi.string(),
@@ -30,10 +31,12 @@ exports.getTotal = {
         var cleanedProducts = myUtils.lowerAndTrim(req.query.product);
         var cleanedInitials = myUtils.lowerAndTrim(req.query.farmerId);
 
-        var total = 0,
+        var subtotal = 0,
+            total = 0,
             orderNum = 0,
             thisQuantity = 0,
-            shippingCosts = 0;
+            shippingCosts = 0,
+            error;
 
         cleanedProducts = myUtils.arrayify(cleanedProducts);
         cleanedInitials = myUtils.arrayify(cleanedInitials);
@@ -65,14 +68,13 @@ exports.getTotal = {
 
                     //IF PRODUCT IS NOT FOUND
                     if (!item || item === null) {
-                        var error = Hapi.error.notFound("Product: " + product + " from " +  cleanedInitials[index] + " not found");
-                        reply(error);
-                        return;
+                        error = Hapi.error.notFound("Product: " + product + " from " +  cleanedInitials[index] + " not found");
+                        return reply(error);
                     }
 
                     if (item.inStock === false) {
-                        reply({logStatus: item.product + " not in stock"});
-                        return;
+                        error = Hapi.error.notFound(item.product + " not in stock");
+                        return reply(error);
                     }
                     if (cleanedProducts.length === 1) {
                         thisQuantity = req.query.quantity;
@@ -81,14 +83,14 @@ exports.getTotal = {
                     }
 
                     //CALCULATING THE TOTAL
-                    total += item.price * thisQuantity;
+                    subtotal += item.price * thisQuantity;
 
                     //IF IT'S THE LAST ITEM TO CALCULATE, SAVE THE THE STARTED SALE TO DB
                     if (index + 1 === cleanedProducts.length) {
                         console.log("TOTAL", total);
 
                         shippingCosts = myUtils.getShipping(total, !!req.query.transportation);
-                        total += shippingCosts;
+                        total = subtotal + shippingCosts + req.query.delivery;
                         var thisSale = new Sale({
                             _id: orderNum,
                             total: total
@@ -99,9 +101,19 @@ exports.getTotal = {
                                 reply(err);
                             }
                         });
-                        log.log({_id: orderNum, total: total});
+                        log.log({
+                            _id: orderNum,
+                            subtotal: subtotal,
+                            shippingCosts: shippingCosts,
+                            total: total
+                        });
                         //REPLYING WITH THE INFO FOR THE SUBMITTING THE ORDER
-                        reply({_id: orderNum, total: total});
+                        reply({
+                            _id: orderNum,
+                            subtotal: subtotal,
+                            shippingCosts: shippingCosts,
+                            total: total
+                        });
                     }
                 });
         });
@@ -113,6 +125,7 @@ exports.getTotal = {
 exports.postSale = {
     validate: {
         payload: {
+            customerName: Joi.string(),
             _id: Joi.number().min(0).required(),
             product: Joi.alternatives().try(Joi.string(), Joi.array().includes(Joi.string())).required(),
             quantity: Joi.alternatives().try(Joi.number().min(1), Joi.array().includes(Joi.number().min(1))).required(),
@@ -120,7 +133,8 @@ exports.postSale = {
             transportation: Joi.string(),
             delivery: Joi.number().required(),
             notes: Joi.string(),
-            total: Joi.number().required()
+            total: Joi.number().required(),
+            subtotal: Joi.number()
         }
     },
     handler: function (req, reply) {
@@ -154,7 +168,7 @@ exports.postSale = {
 
                         thisQuantity = -1 * cleanedQuantities[index];
                         log.log({"Item before": item});
-
+                        console.log("subtotal", req.payload.subtotal);
                         //decreasing quantity by 1
                         Item.findByIdAndUpdate(item._id,
                             {$inc : {quantity: thisQuantity}, $set: {inStock: (item.quantity + thisQuantity > 0)}},
@@ -175,7 +189,9 @@ exports.postSale = {
                                 quantities: req.payload.quantity,
                                 notes: req.payload.notes,
                                 shipping: !!req.payload.transportation,
-                                delivery: req.payload.delivery
+                                delivery: req.payload.delivery,
+                                total: req.payload.total,
+                                subtotal: req.payload.subtotal
                             },
                             function (err, doc) {
                                 if (err) {

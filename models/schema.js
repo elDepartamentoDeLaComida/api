@@ -26,7 +26,8 @@ var saleSchema = new Schema({
     shipping: Boolean,
     delivery: Number,
     notes: String,
-    total: Number
+    total: Number,
+    subtotal: Number
 });
 exports.Sale = mongoose.model('Sale', saleSchema);
 

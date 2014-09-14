@@ -8,9 +8,10 @@ Lab.experiment("Sales:", function () {
     Lab.test("get endpoint can calculate sale",
         function (done) {
             var assertions = {
-                total: 11.5
+                total: 16.5
             };
             var query = {
+                customerName: "sale 1",
                 product: ["oregano", "tomillo"],
                 quantity: [1, 1],
                 farmerId: ["t1", "t1"],
@@ -36,6 +37,7 @@ Lab.experiment("Sales:", function () {
     Lab.test("items that don't exist, return 404 upon total calculation",
         function (done) {
             var query = {
+                customerName: "sale 1",
                 product: ["magicdust", "hornytoad"],
                 quantity: [1, 1],
                 farmerId: ["t2", "t5"],
@@ -68,6 +70,7 @@ Lab.experiment("Sales:", function () {
                     transportation: "true",
                     delivery: 5,
                     total: order.total,
+                    subtotal: order.total - 5,
                     product: ["oregano", "tomillo"],
                     quantity: [1, 1],
                     farmerId: ["t1", "t1"],
